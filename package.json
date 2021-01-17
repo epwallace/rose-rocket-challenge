@@ -1,0 +1,19 @@
+{
+  "name": "rose-rocket-challenge",
+  "version": "1.0.0",
+  "description": "A technical assessment for the Junior Software Engineer position at Rose Rocket (Jan 2021).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epwallace/rose-rocket-challenge.git"
+  },
+  "author": "Evan Wallace",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/epwallace/rose-rocket-challenge/issues"
+  },
+  "homepage": "https://github.com/epwallace/rose-rocket-challenge#readme"
+}

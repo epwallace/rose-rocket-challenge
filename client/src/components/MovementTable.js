@@ -27,7 +27,7 @@ const MovementTable = (props) => {
               description,
             } = movement;
             return (
-              <tr>
+              <tr key={id}>
                 <td>{id}</td>
                 <td>{origLAT}</td>
                 <td>{origLNG}</td>

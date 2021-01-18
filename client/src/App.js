@@ -1,4 +1,5 @@
 import { useState } from "react";
+import MovementMap from "./components/MovementMap";
 import MovementTable from "./components/MovementTable";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
 
       <h2>Current Movements:</h2>
       <MovementTable movementList={movements} />
+      <MovementMap movements={movements} className="mx-auto" />
     </div>
   );
 }

@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* TABLE STYLES -------------------------------------------------------------*/
+
+/* cell padding + default cell border */
+td,
+th {
+  border-bottom: 1px solid black;
+  @apply px-6 py-4;
+}
+
+/* set lighter border in body cells */
+td {
+  @apply border-gray-300;
+}
+
+/* create table striping effect */
+tbody tr:nth-child(2n) {
+  @apply bg-gray-100;
+}
+
+/* add hover effect to body rows */
+tbody tr {
+  @apply hover:bg-gray-300;
+}

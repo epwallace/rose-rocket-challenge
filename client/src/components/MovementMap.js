@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { GoogleMap, LoadScript, Polyline } from "@react-google-maps/api";
+import { useSelector } from "react-redux";
+import { movementsSelector } from "../slices/movementsSlice";
 
 const center = {
   lat: 43.6511,
@@ -12,8 +14,8 @@ const polylineOptions = {
 };
 
 /** An interactive Google Map displaying freight movements. */
-function MovementMap(props) {
-  const { movements } = props;
+const MovementMap = () => {
+  const movements = useSelector(movementsSelector);
   const [polylines, setPolylines] = useState({});
 
   /** Change the stroke color of a specified Polyline.
@@ -65,6 +67,6 @@ function MovementMap(props) {
       </GoogleMap>
     </LoadScript>
   );
-}
+};
 
 export default MovementMap;

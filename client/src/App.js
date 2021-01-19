@@ -1,38 +1,20 @@
-import { useState } from "react";
 import MovementForm from "./components/MovementForm";
 import MovementMap from "./components/MovementMap";
 import MovementTable from "./components/MovementTable";
 
-function App() {
-  // TODO: install redux so movements doesn't need to be passed everywhere
-  const [movements, setMovements] = useState([
-    // NOTE: dummy data for setting up components
-    {
-      id: "2948294798040",
-      origin: { lat: 43.6511, lng: -79.347 },
-      destination: { lat: 45.4215, lng: -75.6972 },
-      description: "Toronto -> Ottawa",
-    },
-    {
-      id: "2948294798041",
-      origin: { lat: 45.4215, lng: -75.6972 },
-      destination: { lat: 45.5017, lng: -73.5673 },
-      description: "Ottawa -> Montreal",
-    },
-  ]);
-
+const App = () => {
   return (
     <div className="App">
       <h1>Rose Rocket Challenge</h1>
 
       <h2>Current Movements:</h2>
       <div className="container w-1/2 mx-auto">
-        <MovementForm setMovements={setMovements} />
+        <MovementForm />
       </div>
-      <MovementTable movementList={movements} />
-      <MovementMap movements={movements} />
+      <MovementTable />
+      <MovementMap />
     </div>
   );
-}
+};
 
 export default App;

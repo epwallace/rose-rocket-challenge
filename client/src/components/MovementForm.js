@@ -1,28 +1,24 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
+import { addMovement } from "../slices/movementsSlice";
 
-const MovementForm = (props) => {
+const MovementForm = () => {
+  const dispatch = useDispatch();
   const { register, handleSubmit, formState } = useForm({ mode: "onBlur" });
-  const { setMovements } = props;
 
   const onSubmit = (data) => {
-    const formatted = {
-      // TODO: proper ID generation
-      id: 4324242352,
-      origin: {
-        lat: data["originLat"],
-        lng: data["originLng"],
-      },
-      destination: {
-        lat: data["destinationLat"],
-        lng: data["destinationLng"],
-      },
-      description: data.description,
+    const origin = {
+      lat: data["originLat"],
+      lng: data["originLng"],
     };
+    const destination = {
+      lat: data["destinationLat"],
+      lng: data["destinationLng"],
+    };
+    const description = data.description;
 
-    setMovements((prevState) => {
-      return [...prevState, formatted];
-    });
+    dispatch(addMovement(origin, destination, description));
   };
 
   /** Generate a form input that takes a coordinate in the range [-90, 90] */

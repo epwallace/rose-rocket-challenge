@@ -1,8 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { movementsSelector } from "../slices/movementsSlice";
 
 /** A tabular representation of a list of freight movements. */
-const MovementTable = (props) => {
-  const { movementList } = props;
+const MovementTable = () => {
+  const movements = useSelector(movementsSelector);
   return (
     <table className="table-auto">
       <thead>
@@ -16,8 +18,8 @@ const MovementTable = (props) => {
         </tr>
       </thead>
       <tbody>
-        {movementList &&
-          movementList.map((movement) => {
+        {movements &&
+          movements.map((movement) => {
             const { id, origin, destination, description } = movement;
             return (
               <tr key={id}>

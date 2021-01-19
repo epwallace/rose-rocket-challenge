@@ -7,18 +7,14 @@ function App() {
     // NOTE: dummy data for setting up components
     {
       id: "2948294798040",
-      origLAT: 43.6511,
-      origLNG: -79.347,
-      destLAT: 45.4215,
-      destLNG: -75.6972,
+      origin: { lat: 43.6511, lng: -79.347 },
+      destination: { lat: 45.4215, lng: -75.6972 },
       description: "Toronto -> Ottawa",
     },
     {
       id: "2948294798041`",
-      origLAT: 45.4215,
-      origLNG: -75.6972,
-      destLAT: 45.5017,
-      destLNG: -73.5673,
+      origin: { lat: 45.4215, lng: -75.6972 },
+      destination: { lat: 45.5017, lng: -73.5673 },
       description: "Ottawa -> Montreal",
     },
   ]);

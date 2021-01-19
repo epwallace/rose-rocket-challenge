@@ -18,21 +18,14 @@ const MovementTable = (props) => {
       <tbody>
         {movementList &&
           movementList.map((movement) => {
-            const {
-              id,
-              origLAT,
-              origLNG,
-              destLAT,
-              destLNG,
-              description,
-            } = movement;
+            const { id, origin, destination, description } = movement;
             return (
               <tr key={id}>
                 <td>{id}</td>
-                <td>{origLAT}</td>
-                <td>{origLNG}</td>
-                <td>{destLAT}</td>
-                <td>{destLNG}</td>
+                <td>{origin.lat}</td>
+                <td>{origin.lng}</td>
+                <td>{destination.lat}</td>
+                <td>{destination.lng}</td>
                 <td>{description}</td>
               </tr>
             );

@@ -46,12 +46,8 @@ function MovementMap(props) {
           // convert movements into polylines
           movements &&
             movements.map((movement) => {
-              const { id, origLAT, origLNG, destLAT, destLNG } = movement;
-
-              const path = [
-                { lat: origLAT, lng: origLNG },
-                { lat: destLAT, lng: destLNG },
-              ];
+              const { id, origin, destination } = movement;
+              const path = [origin, destination];
 
               return (
                 <Polyline

@@ -1,11 +1,14 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const MovementForm = () => {
+const MovementForm = (props) => {
   const { register, handleSubmit, formState } = useForm({ mode: "onBlur" });
+  const { setMovements } = props;
 
   const onSubmit = (data) => {
     const formatted = {
+      // TODO: proper ID generation
+      id: 4324242352,
       origin: {
         lat: data["originLat"],
         lng: data["originLng"],
@@ -16,7 +19,10 @@ const MovementForm = () => {
       },
       description: data.description,
     };
-    console.log(formatted);
+
+    setMovements((prevState) => {
+      return [...prevState, formatted];
+    });
   };
 
   /** Generate a form input that takes a coordinate in the range [-90, 90] */

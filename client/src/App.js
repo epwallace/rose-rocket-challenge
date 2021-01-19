@@ -4,6 +4,7 @@ import MovementMap from "./components/MovementMap";
 import MovementTable from "./components/MovementTable";
 
 function App() {
+  // TODO: install redux so movements doesn't need to be passed everywhere
   const [movements, setMovements] = useState([
     // NOTE: dummy data for setting up components
     {
@@ -13,7 +14,7 @@ function App() {
       description: "Toronto -> Ottawa",
     },
     {
-      id: "2948294798041`",
+      id: "2948294798041",
       origin: { lat: 45.4215, lng: -75.6972 },
       destination: { lat: 45.5017, lng: -73.5673 },
       description: "Ottawa -> Montreal",
@@ -26,7 +27,7 @@ function App() {
 
       <h2>Current Movements:</h2>
       <div className="container w-1/2 mx-auto">
-        <MovementForm />
+        <MovementForm setMovements={setMovements} />
       </div>
       <MovementTable movementList={movements} />
       <MovementMap movements={movements} />

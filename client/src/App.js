@@ -1,4 +1,5 @@
 import { useState } from "react";
+import MovementForm from "./components/MovementForm";
 import MovementMap from "./components/MovementMap";
 import MovementTable from "./components/MovementTable";
 
@@ -24,6 +25,7 @@ function App() {
       <h1>Rose Rocket Challenge</h1>
 
       <h2>Current Movements:</h2>
+      <MovementForm />
       <MovementTable movementList={movements} />
       <MovementMap movements={movements} />
     </div>

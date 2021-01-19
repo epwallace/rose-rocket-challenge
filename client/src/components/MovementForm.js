@@ -1,11 +1,29 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { addMovement } from "../slices/movementsSlice";
+import { addMovement, movementsSelector } from "../slices/movementsSlice";
 
 const MovementForm = () => {
+  const movements = useSelector(movementsSelector);
   const dispatch = useDispatch();
   const { register, handleSubmit, formState } = useForm({ mode: "onBlur" });
+
+  // TODO: define types for movement and locations (latLng) for more descriptive JSDoc params
+  /** Find all movements from origin to destination in the given array
+   * @param {[Object]} movements An array of movements
+   * @param {{lat: number, lng: number}} origin Originating latitude and longitude
+   * @param {{lat: number, lng: number}} destination Destination latitude and longitude
+   */
+  const findDuplicateMovements = (movements, origin, destination) => {
+    return Object.values(movements).filter((movement) => {
+      return (
+        movement.origin.lat === origin.lat &&
+        movement.origin.lng === origin.lng &&
+        movement.destination.lat === destination.lat &&
+        movement.destination.lng === destination.lng
+      );
+    });
+  };
 
   const onSubmit = (data) => {
     const origin = {
@@ -18,16 +36,32 @@ const MovementForm = () => {
     };
     const description = data.description;
 
+    // check if the provided coordinates are already associated with a movement
+    let duplicates = findDuplicateMovements(movements, origin, destination);
+    if (duplicates.length) {
+      alert(
+        `This movement already exists (id: ${duplicates[0].id}! Please adjust the coordinates, or edit movement ${duplicates[0].id}.`
+      );
+      return;
+    }
+
+    // if no duplicates are found, create the movement
     dispatch(addMovement(origin, destination, description));
   };
 
   /** Generate a form input that takes a coordinate in the range [-90, 90] */
   const createCoordinateInput = (name, label) => {
     return (
-      <label className={formState.errors[name] && "font-bold"}>
+      <label
+        className={
+          formState.errors[name]
+            ? "m-1 rounded-md bg-red-300 px-2 py-1 font-bold"
+            : "m-1"
+        }
+      >
         <span>{label}</span>
         <input
-          className={formState.errors[name] && "bg-red-200"}
+          className="m-1"
           type="number"
           name={name}
           ref={register({

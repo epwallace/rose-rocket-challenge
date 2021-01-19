@@ -5,10 +5,10 @@ import { combineReducers } from "redux";
 import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
-import movementReducer from "./slices/movementsSlice";
-
+import movementsReducer from "./slices/movementsSlice";
+// TODO: consider removing this part if movementsReducer is the only reducer
 const rootReducer = combineReducers({
-  movements: movementReducer,
+  movements: movementsReducer,
 });
 
 const store = configureStore({

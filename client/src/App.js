@@ -25,7 +25,7 @@ function App() {
 
       <h2>Current Movements:</h2>
       <MovementTable movementList={movements} />
-      <MovementMap movements={movements} className="mx-auto" />
+      <MovementMap movements={movements} />
     </div>
   );
 }

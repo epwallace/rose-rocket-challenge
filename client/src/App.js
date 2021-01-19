@@ -25,7 +25,9 @@ function App() {
       <h1>Rose Rocket Challenge</h1>
 
       <h2>Current Movements:</h2>
-      <MovementForm />
+      <div className="container w-1/2 mx-auto">
+        <MovementForm />
+      </div>
       <MovementTable movementList={movements} />
       <MovementMap movements={movements} />
     </div>

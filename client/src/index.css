@@ -25,3 +25,17 @@ tbody tr:nth-child(2n) {
 tbody tr {
   @apply hover:bg-gray-300;
 }
+
+/* FORM STYLES --------------------------------------------------------------*/
+input {
+  @apply mt-1;
+}
+
+fieldset > fieldset {
+  @apply flex flex-col w-1/4 border-2 p-3;
+}
+
+fieldset label,
+fieldset input {
+  @apply ml-3;
+}

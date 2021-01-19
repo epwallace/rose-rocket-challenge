@@ -2,16 +2,75 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 const MovementForm = () => {
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const { register, handleSubmit, formState } = useForm({ mode: "onBlur" });
+
+  const onSubmit = (data) => {
+    const formatted = {
+      origin: {
+        lat: data["originLat"],
+        lng: data["originLng"],
+      },
+      destination: {
+        lat: data["destinationLat"],
+        lng: data["destinationLng"],
+      },
+      description: data.description,
+    };
+    console.log(formatted);
+  };
+
+  /** Generate a form input that takes a coordinate in the range [-90, 90] */
+  const createCoordinateInput = (name, label) => {
+    return (
+      <label className={formState.errors[name] && "font-bold"}>
+        <span>{label}</span>
+        <input
+          className={formState.errors[name] && "bg-red-200"}
+          type="number"
+          name={name}
+          ref={register({
+            required: true,
+            valueAsNumber: true,
+            validate: (x) =>
+              (x >= -90 && x <= 90) ||
+              "Must be a number in the range [-90, 90]",
+          })}
+        />
+      </label>
+    );
+  };
+
+  // TODO: render error messages on the form (e.g. "This field is required")
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input name="origin-lat" ref={register} />
-      <input name="origin-lng" ref={register} />
-      <input name="destination-lat" ref={register} />
-      <input name="destination-lng" ref={register} />
-      <input name="description" ref={register} />
+    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      {/* coordinates section */}
+      <fieldset className="flex justify-between">
+        {/* originating coordinates */}
+        <fieldset>
+          <legend>Originating Coordinates:</legend>
+          {createCoordinateInput("originLat", "Latitude")}
+          {createCoordinateInput("originLng", "Longitude")}
+        </fieldset>
+
+        {/* destination coordinates */}
+        <fieldset>
+          <legend>Desintation Coordinates:</legend>
+          {createCoordinateInput("destinationLat", "Latitude")}
+          {createCoordinateInput("destinationLng", "Longitude")}
+        </fieldset>
+      </fieldset>
+
+      {/* movement description */}
+      <label>
+        <span>Description:</span>
+        <input type="text" name="description" ref={register} />
+      </label>
+
+      {/* submission */}
       <input type="submit" />
+      {!formState.isValid && formState.isSubmitted && (
+        <p>Please fix all errors and resubmit.</p>
+      )}
     </form>
   );
 };

@@ -32,11 +32,20 @@ const movementsSlice = createSlice({
         };
       },
     },
+    updateMovement: {
+      reducer(state, action) {
+        const { id } = action.payload;
+        const index = state.findIndex((movement) => movement.id === id);
+        if (index) {
+          state[index] = { ...action.payload };
+        }
+      },
+    },
   },
 });
 
 export const movementsSelector = (state) => state.movements;
 
-export const { addMovement } = movementsSlice.actions;
+export const { addMovement, updateMovement } = movementsSlice.actions;
 
 export default movementsSlice.reducer;

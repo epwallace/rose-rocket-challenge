@@ -6,9 +6,11 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import movementsReducer from "./slices/movementsSlice";
-// TODO: consider removing this part if movementsReducer is the only reducer
+import formReducer from "./slices/formSlice";
+
 const rootReducer = combineReducers({
   movements: movementsReducer,
+  form: formReducer,
 });
 
 const store = configureStore({

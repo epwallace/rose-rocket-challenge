@@ -168,12 +168,18 @@ const MovementForm = () => {
       </label>
 
       {/* submission */}
-      <input type="submit" />
+      <div className="mx-auto">
+        <input className="btn-green w-40" type="submit" />
+        <button
+          className="btn-yellow w-40"
+          onClick={() => dispatch(closeForm())}
+        >
+          cancel
+        </button>
+      </div>
       {!formState.isValid && formState.isSubmitted && (
         <p>Please fix all errors and resubmit.</p>
       )}
-
-      <button onClick={() => dispatch(closeForm())}>cancel</button>
     </form>
   );
 };

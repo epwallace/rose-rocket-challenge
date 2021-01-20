@@ -1,6 +1,5 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
 
 /* TABLE STYLES -------------------------------------------------------------*/
 
@@ -8,7 +7,7 @@
 td,
 th {
   border-bottom: 1px solid black;
-  @apply px-6 py-4;
+  @apply px-3 py-2 text-center;
 }
 
 /* set lighter border in body cells */
@@ -39,3 +38,30 @@ fieldset label,
 fieldset input {
   @apply ml-3;
 }
+
+/*  BUTTON STYLES */
+.btn {
+  @apply inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition rounded-xl shadow focus:outline-none;
+}
+
+.btn-blue {
+  @apply btn bg-blue-700 hover:bg-blue-800;
+}
+
+.btn-green {
+  @apply btn bg-green-500 hover:bg-green-600;
+}
+
+.btn-red {
+  @apply btn bg-red-500 hover:bg-red-600;
+}
+
+.btn-yellow {
+  @apply btn bg-yellow-500 hover:bg-yellow-600;
+}
+
+td .btn {
+  @apply leading-4 px-4;
+}
+
+@tailwind utilities;

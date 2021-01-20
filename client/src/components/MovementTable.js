@@ -1,19 +1,23 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { launchCreateForm, launchEditForm } from "../slices/formSlice";
-import { movementsSelector } from "../slices/movementsSlice";
+import { deleteMovement, movementsSelector } from "../slices/movementsSlice";
 
 /** A tabular representation of a list of freight movements. */
 const MovementTable = () => {
   const dispatch = useDispatch();
   const movements = useSelector(movementsSelector);
 
+  const handleDelete = (id) => {
+    const confirmed = window.confirm(
+      `Delete movement with id ${id}? This operation is irreversible.`
+    );
+    if (confirmed) dispatch(deleteMovement(id));
+  };
+
   return (
     <>
-      <button onClick={() => dispatch(launchCreateForm())}>
-        add new movement
-      </button>
-      <table className="table-auto">
+      <table className="table-auto mx-auto p-3">
         <thead>
           <tr>
             <th>ID</th>
@@ -37,11 +41,21 @@ const MovementTable = () => {
                   <td>{destination.lat}</td>
                   <td>{destination.lng}</td>
                   <td>{description}</td>
-                  <td>
+                  <td className="flex">
+                    {/* edit button */}
                     <button
+                      className="btn-blue py-1"
                       onClick={() => dispatch(launchEditForm({ movement }))}
                     >
                       edit
+                    </button>
+
+                    {/* delete button */}
+                    <button
+                      className="btn-red ml-1"
+                      onClick={() => handleDelete(movement.id)}
+                    >
+                      delete
                     </button>
                   </td>
                 </tr>
@@ -49,6 +63,12 @@ const MovementTable = () => {
             })}
         </tbody>
       </table>
+      <button
+        className="block btn-green mx-auto mt-2"
+        onClick={() => dispatch(launchCreateForm())}
+      >
+        add new movement
+      </button>
     </>
   );
 };

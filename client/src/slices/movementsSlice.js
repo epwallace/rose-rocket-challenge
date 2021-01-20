@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-let nextMovementId = 11110003;
+let nextMovementId = 11110004;
 
 const movementsSlice = createSlice({
   name: "movements",
@@ -16,6 +16,12 @@ const movementsSlice = createSlice({
       origin: { lat: 45.4215, lng: -75.6972 },
       destination: { lat: 45.5017, lng: -73.5673 },
       description: "Ottawa -> Montreal",
+    },
+    {
+      id: 11110003,
+      origin: { lat: 46.4917, lng: -80.993 },
+      destination: { lat: 45.4215, lng: -75.6972 },
+      description: "Sudbury -> Ottawa",
     },
   ],
   reducers: {
@@ -41,11 +47,21 @@ const movementsSlice = createSlice({
         }
       },
     },
+    deleteMovement: {
+      reducer(state, action) {
+        const id = action.payload;
+        return state.filter((movement) => movement.id !== id);
+      },
+    },
   },
 });
 
 export const movementsSelector = (state) => state.movements;
 
-export const { addMovement, updateMovement } = movementsSlice.actions;
+export const {
+  addMovement,
+  updateMovement,
+  deleteMovement,
+} = movementsSlice.actions;
 
 export default movementsSlice.reducer;

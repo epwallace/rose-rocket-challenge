@@ -8,12 +8,15 @@ const App = () => {
   const formIsActive = useSelector(getFormStatus);
 
   return (
-    <div className="App">
-      <h1>Rose Rocket Challenge</h1>
+    <div className="bg-gray-200 p-5">
+      <h1 className="text-3xl mb-5">Rose Rocket Challenge</h1>
 
-      <h2>Current Movements:</h2>
-      {formIsActive ? <MovementForm /> : <MovementTable />}
-      <MovementMap />
+      <div className="flex h-screen divide-x-8">
+        <div className="bg-white rounded-xl w-2/3 text-xs">
+          {formIsActive ? <MovementForm /> : <MovementTable />}
+        </div>
+        <MovementMap />
+      </div>
     </div>
   );
 };

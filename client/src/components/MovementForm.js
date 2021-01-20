@@ -49,10 +49,8 @@ const MovementForm = (props) => {
     });
   };
 
-  /* TODO: this function is a monstrosity!!!!!
-           split into handleCreation/handleEdit to simplify logic
-           and add helpers where it's useful (e.g. first 9 lines) */
-  const onSubmit = (data) => {
+  /** Convert the FormData from MovementForm into {origin, destination, description} */
+  const formatFormData = (data) => {
     const origin = {
       lat: data["originLat"],
       lng: data["originLng"],
@@ -63,49 +61,48 @@ const MovementForm = (props) => {
     };
     const description = data.description;
 
-    // check if the provided coordinates are already associated with a movement
+    return { origin, destination, description };
+  };
+
+  /** Creates a new movement with the provided data */
+  const handleCreation = (data) => {
+    const { origin, destination, description } = formatFormData(data);
+
+    // check for duplicates
     let duplicates = findDuplicateMovements(movements, origin, destination);
-    if (movement) {
-      duplicates = duplicates.filter(
-        (duplicate) => duplicate.id !== movement.id
-      );
-    }
-
     if (duplicates.length) {
-      const duplicateId = duplicates[0].id;
-
-      if (movement) {
-        // case: user's edit introduces a duplicate movement; warn them, but allow it
-        let confirmed = window.confirm(
-          `An identical movement already exists (id: ${duplicateId}). 
-          Proceed anyway?`
-        );
-        if (confirmed) {
-          dispatch(
-            updateMovement({
-              origin,
-              destination,
-              description,
-              id: movement.id,
-            })
-          );
-          dispatch(closeForm());
-        }
-      } else {
-        // creating a movement: do not permit a duplicate
-        alert(
-          `This movement already exists (id: ${duplicates[0].id}! 
-            Please adjust the coordinates, or edit movement ${duplicates[0].id}.`
-        );
-      }
+      // the movement has duplicate coordinates: forbid creation
+      alert(
+        `This movement already exists (id: ${duplicates[0].id}! Please provide unique coordinates.`
+      );
     } else {
-      if (!movement) dispatch(addMovement(origin, destination, description));
-      else
-        dispatch(
-          updateMovement({ origin, destination, description, id: movement.id })
-        );
+      // the movement has unique coordinates: allow creation
+      dispatch(addMovement(origin, destination, description));
       dispatch(closeForm());
     }
+  };
+
+  /** Update an existing movement with the provided data */
+  const handleUpdate = (data) => {
+    const { origin, destination, description } = formatFormData(data);
+    const payload = { origin, destination, description, id: movement.id };
+
+    // check for duplicates
+    let duplicates = findDuplicateMovements(movements, origin, destination);
+
+    // if the coordinates are unchanged, the current movement will be in the array
+    duplicates = duplicates.filter((dupe) => dupe.id !== movement.id);
+
+    if (duplicates.length) {
+      // the new coordinates are already associated with a movement: warn user
+      let confirmed = window.confirm(
+        `An identical movement already exists (id: ${duplicates[0].id}). Proceed anyway?`
+      );
+      if (!confirmed) return;
+    }
+    // the new coordinates are unique, or the user confirms duplication
+    dispatch(updateMovement(payload));
+    dispatch(closeForm());
   };
 
   /** Generate a form input that takes a coordinate in the range [-90, 90] */
@@ -138,7 +135,10 @@ const MovementForm = (props) => {
 
   // TODO: render error messages on the form (e.g. "This field is required")
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="flex flex-col"
+      onSubmit={handleSubmit(movement ? handleUpdate : handleCreation)}
+    >
       {/* coordinates section */}
       <fieldset className="flex justify-between">
         {/* originating coordinates */}

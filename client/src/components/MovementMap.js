@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Polyline } from "@react-google-maps/api";
-import { useSelector } from "react-redux";
-import { movementsSelector } from "../slices/movementsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { movementsSelector, setFocus } from "../slices/movementsSlice";
+import { usePrevious } from "../util";
 
 const center = {
   lat: 43.6511,
@@ -10,22 +11,30 @@ const center = {
 
 const polylineOptions = {
   strokeColor: "#000000",
-  strokeWeight: 2,
+  strokeWeight: 3,
 };
 
 /** An interactive Google Map displaying freight movements. */
 const MovementMap = () => {
+  const dispatch = useDispatch();
+  const focus = useSelector((state) => state.movements.focus);
+  const previousFocus = usePrevious(focus);
   const movements = useSelector(movementsSelector);
   const [polylines, setPolylines] = useState({});
 
-  /** Change the stroke color of a specified Polyline.
-   * @param {string} id The movement ID corresponding to the Polyline
-   * @param {string} color The hex code for the desired color (defaults to red: "#FF0000")
-   */
-  const setPolylineColor = (id, color = "#ff0000") => {
-    const line = polylines[id];
-    line.setOptions({ strokeColor: color });
-  };
+  // set polyline color to red when movement becomes focused
+  useEffect(() => {
+    if (focus) {
+      polylines[focus].setOptions({ strokeColor: "#FF0000" });
+    }
+  }, [focus, polylines]);
+
+  // reset polyline color to black when movements loses focus
+  useEffect(() => {
+    if (previousFocus) {
+      polylines[previousFocus].setOptions({ strokeColor: "#000000" });
+    }
+  }, [previousFocus, polylines]);
 
   /** Maps a movement ID to a Polyline (in "polylines" state object)
    * @param {string} id The movement ID corresponding to the Polyline
@@ -58,8 +67,8 @@ const MovementMap = () => {
                   id={id}
                   options={polylineOptions}
                   onLoad={(line) => mapIdToPolyline(id, line)} // maintain a reference
-                  onMouseOver={() => setPolylineColor(id)}
-                  onMouseOut={() => setPolylineColor(id, "#000000")}
+                  onMouseOver={() => dispatch(setFocus(id))}
+                  onMouseOut={() => dispatch(setFocus(null))}
                 />
               );
             })

@@ -16,13 +16,15 @@ td {
 }
 
 /* create table striping effect */
-tbody tr:nth-child(2n) {
+tr:nth-child(2n) {
   @apply bg-gray-100;
 }
 
-/* add hover effect to body rows */
-tbody tr {
-  @apply hover:bg-gray-300;
+/* add hover effect to body rows
+   note: tr.active:hover is hyperspecific because it needs to override the tr:nth-child above */
+tr.active,
+tr.active:hover {
+  @apply bg-yellow-100;
 }
 
 /* FORM STYLES --------------------------------------------------------------*/

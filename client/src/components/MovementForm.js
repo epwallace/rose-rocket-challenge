@@ -1,12 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { addMovement, movementsSelector } from "../slices/movementsSlice";
+import {
+  addMovement,
+  movementsSelector,
+  updateMovement,
+} from "../slices/movementsSlice";
+import { closeForm } from "../slices/formSlice";
 
-const MovementForm = () => {
+const MovementForm = (props) => {
+  const { movement } = props;
   const movements = useSelector(movementsSelector);
   const dispatch = useDispatch();
-  const { register, handleSubmit, formState } = useForm({ mode: "onBlur" });
+  const { register, handleSubmit, formState, reset } = useForm({
+    mode: "onBlur",
+  });
+
+  // if the movement prop is provided, set the fields accordingly
+  useEffect(() => {
+    if (movement) {
+      const { origin, destination, description } = movement;
+
+      // populate the form fields
+      reset({
+        description,
+        originLat: origin.lat,
+        originLng: origin.lng,
+        destinationLat: destination.lat,
+        destinationLng: destination.lng,
+      });
+    }
+  }, [movement, movements, reset]);
 
   // TODO: define types for movement and locations (latLng) for more descriptive JSDoc params
   /** Find all movements from origin to destination in the given array
@@ -25,6 +49,9 @@ const MovementForm = () => {
     });
   };
 
+  /* TODO: this function is a monstrosity!!!!!
+           split into handleCreation/handleEdit to simplify logic
+           and add helpers where it's useful (e.g. first 9 lines) */
   const onSubmit = (data) => {
     const origin = {
       lat: data["originLat"],
@@ -38,15 +65,47 @@ const MovementForm = () => {
 
     // check if the provided coordinates are already associated with a movement
     let duplicates = findDuplicateMovements(movements, origin, destination);
-    if (duplicates.length) {
-      alert(
-        `This movement already exists (id: ${duplicates[0].id}! Please adjust the coordinates, or edit movement ${duplicates[0].id}.`
+    if (movement) {
+      duplicates = duplicates.filter(
+        (duplicate) => duplicate.id !== movement.id
       );
-      return;
     }
 
-    // if no duplicates are found, create the movement
-    dispatch(addMovement(origin, destination, description));
+    if (duplicates.length) {
+      const duplicateId = duplicates[0].id;
+
+      if (movement) {
+        // case: user's edit introduces a duplicate movement; warn them, but allow it
+        let confirmed = window.confirm(
+          `An identical movement already exists (id: ${duplicateId}). 
+          Proceed anyway?`
+        );
+        if (confirmed) {
+          dispatch(
+            updateMovement({
+              origin,
+              destination,
+              description,
+              id: movement.id,
+            })
+          );
+          dispatch(closeForm());
+        }
+      } else {
+        // creating a movement: do not permit a duplicate
+        alert(
+          `This movement already exists (id: ${duplicates[0].id}! 
+            Please adjust the coordinates, or edit movement ${duplicates[0].id}.`
+        );
+      }
+    } else {
+      if (!movement) dispatch(addMovement(origin, destination, description));
+      else
+        dispatch(
+          updateMovement({ origin, destination, description, id: movement.id })
+        );
+      dispatch(closeForm());
+    }
   };
 
   /** Generate a form input that takes a coordinate in the range [-90, 90] */
@@ -63,6 +122,7 @@ const MovementForm = () => {
         <input
           className="m-1"
           type="number"
+          step="any"
           name={name}
           ref={register({
             required: true,
@@ -107,6 +167,8 @@ const MovementForm = () => {
       {!formState.isValid && formState.isSubmitted && (
         <p>Please fix all errors and resubmit.</p>
       )}
+
+      <button onClick={() => dispatch(closeForm())}>cancel</button>
     </form>
   );
 };

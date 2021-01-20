@@ -10,10 +10,7 @@ const MovementTable = () => {
 
   return (
     <>
-      <button onClick={() => dispatch(launchCreateForm())}>
-        add new movement
-      </button>
-      <table className="table-auto">
+      <table className="table-auto mx-auto p-3">
         <thead>
           <tr>
             <th>ID</th>
@@ -37,8 +34,10 @@ const MovementTable = () => {
                   <td>{destination.lat}</td>
                   <td>{destination.lng}</td>
                   <td>{description}</td>
-                  <td>
+                  <td className="flex">
+                    {/* edit button */}
                     <button
+                      className="btn-blue py-1"
                       onClick={() => dispatch(launchEditForm({ movement }))}
                     >
                       edit
@@ -49,6 +48,12 @@ const MovementTable = () => {
             })}
         </tbody>
       </table>
+      <button
+        className="block btn-green mx-auto mt-2"
+        onClick={() => dispatch(launchCreateForm())}
+      >
+        add new movement
+      </button>
     </>
   );
 };

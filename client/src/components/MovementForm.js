@@ -6,20 +6,20 @@ import {
   movementsSelector,
   updateMovement,
 } from "../slices/movementsSlice";
-import { closeForm } from "../slices/formSlice";
+import { closeForm, getCurrentMovement } from "../slices/formSlice";
 
-const MovementForm = (props) => {
-  const { movement } = props;
+const MovementForm = () => {
+  const currentMovement = useSelector(getCurrentMovement);
   const movements = useSelector(movementsSelector);
   const dispatch = useDispatch();
   const { register, handleSubmit, formState, reset } = useForm({
     mode: "onBlur",
   });
 
-  // if the movement prop is provided, set the fields accordingly
+  // if a movement is being edited, set the fields accordingly
   useEffect(() => {
-    if (movement) {
-      const { origin, destination, description } = movement;
+    if (currentMovement) {
+      const { origin, destination, description } = currentMovement;
 
       // populate the form fields
       reset({
@@ -30,7 +30,7 @@ const MovementForm = (props) => {
         destinationLng: destination.lng,
       });
     }
-  }, [movement, movements, reset]);
+  }, [currentMovement, reset]);
 
   // TODO: define types for movement and locations (latLng) for more descriptive JSDoc params
   /** Find all movements from origin to destination in the given array
@@ -85,13 +85,18 @@ const MovementForm = (props) => {
   /** Update an existing movement with the provided data */
   const handleUpdate = (data) => {
     const { origin, destination, description } = formatFormData(data);
-    const payload = { origin, destination, description, id: movement.id };
+    const payload = {
+      origin,
+      destination,
+      description,
+      id: currentMovement.id,
+    };
 
     // check for duplicates
     let duplicates = findDuplicateMovements(movements, origin, destination);
 
     // if the coordinates are unchanged, the current movement will be in the array
-    duplicates = duplicates.filter((dupe) => dupe.id !== movement.id);
+    duplicates = duplicates.filter((dupe) => dupe.id !== currentMovement.id);
 
     if (duplicates.length) {
       // the new coordinates are already associated with a movement: warn user
@@ -137,7 +142,7 @@ const MovementForm = (props) => {
   return (
     <form
       className="flex flex-col"
-      onSubmit={handleSubmit(movement ? handleUpdate : handleCreation)}
+      onSubmit={handleSubmit(currentMovement ? handleUpdate : handleCreation)}
     >
       {/* coordinates section */}
       <fieldset className="flex justify-between">

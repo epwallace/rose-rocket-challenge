@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Polyline } from "@react-google-maps/api";
 import { useDispatch, useSelector } from "react-redux";
-import { movementsSelector, setFocus } from "../slices/movementsSlice";
+import { movementsSelector } from "../slices/movementsSlice";
+import { setFocus } from "../slices/focusSlice";
 import { usePrevious } from "../util";
 
 const center = {
@@ -17,7 +18,7 @@ const polylineOptions = {
 /** An interactive Google Map displaying freight movements. */
 const MovementMap = () => {
   const dispatch = useDispatch();
-  const focus = useSelector((state) => state.movements.focus);
+  const focus = useSelector((state) => state.focus);
   const previousFocus = usePrevious(focus);
   const movements = useSelector(movementsSelector);
   const [polylines, setPolylines] = useState({});

@@ -1,16 +1,13 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { launchCreateForm, launchEditForm } from "../slices/formSlice";
-import {
-  deleteMovement,
-  movementsSelector,
-  setFocus,
-} from "../slices/movementsSlice";
+import { deleteMovement, movementsSelector } from "../slices/movementsSlice";
+import { setFocus } from "../slices/focusSlice";
 
 /** A tabular representation of a list of freight movements. */
 const MovementTable = () => {
   const dispatch = useDispatch();
-  const focus = useSelector((state) => state.movements.focus);
+  const focus = useSelector((state) => state.focus);
   const movements = useSelector(movementsSelector);
 
   const handleDelete = (id) => {
@@ -43,7 +40,7 @@ const MovementTable = () => {
                   key={id}
                   className={focus === id ? "active" : ""}
                   onMouseEnter={() => dispatch(setFocus(id))}
-                  onMouseOut={() => dispatch(setFocus(null))}
+                  onMouseLeave={() => dispatch(setFocus(null))}
                 >
                   <td>{id}</td>
                   <td>{origin.lat}</td>

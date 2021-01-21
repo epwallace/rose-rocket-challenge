@@ -8,11 +8,13 @@ import App from "./App";
 import movementsReducer from "./slices/movementsSlice";
 import formReducer from "./slices/formSlice";
 import focusReducer from "./slices/focusSlice";
+import modeReducer from "./slices/modeSlice";
 
 const rootReducer = combineReducers({
   movements: movementsReducer,
   form: formReducer,
   focus: focusReducer,
+  mode: modeReducer,
 });
 
 const store = configureStore({

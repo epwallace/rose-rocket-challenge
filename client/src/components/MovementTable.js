@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { launchCreateForm, launchEditForm } from "../slices/formSlice";
 import { deleteMovement, movementsSelector } from "../slices/movementsSlice";
 import { setFocus } from "../slices/focusSlice";
+import { toggleMode } from "../slices/modeSlice";
 
 /** A tabular representation of a list of freight movements. */
 const MovementTable = () => {
   const dispatch = useDispatch();
   const focus = useSelector((state) => state.focus);
   const movements = useSelector(movementsSelector);
+  const mode = useSelector((state) => state.mode);
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
@@ -75,6 +77,12 @@ const MovementTable = () => {
         onClick={() => dispatch(launchCreateForm())}
       >
         add new movement
+      </button>
+      <button
+        className="block btn-blue mx-auto mt-2"
+        onClick={() => dispatch(toggleMode())}
+      >
+        route mode
       </button>
     </>
   );

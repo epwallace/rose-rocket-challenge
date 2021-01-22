@@ -10,7 +10,6 @@ const MovementTable = () => {
   const dispatch = useDispatch();
   const focus = useSelector((state) => state.focus);
   const movements = useSelector(movementsSelector);
-  const mode = useSelector((state) => state.mode);
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
@@ -25,10 +24,8 @@ const MovementTable = () => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Origin LAT</th>
-            <th>Origin LNG</th>
-            <th>Destination LAT</th>
-            <th>Destination LNG</th>
+            <th>Origin</th>
+            <th>Destination</th>
             <th>Description</th>
             <th>Actions</th>
           </tr>
@@ -45,10 +42,12 @@ const MovementTable = () => {
                   onMouseLeave={() => dispatch(setFocus(null))}
                 >
                   <td>{id}</td>
-                  <td>{origin.lat}</td>
-                  <td>{origin.lng}</td>
-                  <td>{destination.lat}</td>
-                  <td>{destination.lng}</td>
+                  <td>
+                    ({origin.lat}, {origin.lng})
+                  </td>
+                  <td>
+                    ({destination.lat}, {destination.lng})
+                  </td>
                   <td>{description}</td>
                   <td className="flex">
                     {/* edit button */}

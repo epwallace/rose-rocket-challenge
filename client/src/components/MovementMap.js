@@ -36,12 +36,14 @@ const MovementMap = () => {
     }
   }, [focus, polylines]);
 
-  // reset polyline color to black when movements loses focus
+  // reset polyline color when movements loses focus
   useEffect(() => {
     if (previousFocus) {
-      polylines[previousFocus].setOptions({ strokeColor: orange });
+      polylines[previousFocus].setOptions({
+        strokeColor: mode === "movement" ? orange : blue,
+      });
     }
-  }, [previousFocus, polylines]);
+  }, [previousFocus, polylines, mode]);
 
   useEffect(() => {
     dispatch(setFocus(null));

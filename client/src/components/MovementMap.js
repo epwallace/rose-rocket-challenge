@@ -44,8 +44,9 @@ const MovementMap = () => {
   }, [previousFocus, polylines]);
 
   useEffect(() => {
+    dispatch(setFocus(null));
     setRoute(naiveAlgorithm(movements));
-  }, [movements]);
+  }, [movements, dispatch]);
 
   /** Maps a movement ID to a Polyline (in "polylines" state object)
    * @param {string} id The movement ID corresponding to the Polyline
@@ -140,6 +141,7 @@ const MovementMap = () => {
                     // when a truck must drive without freight, change the line style
                     icons: id ? [arrowhead] : [thinClosedArrow, dashed],
                   }}
+                    onLoad={(line) => mapIdToPolyline(id, line)} // maintain a reference
                   onMouseOver={() => dispatch(id && setFocus(id))}
                   onMouseOut={() => dispatch(setFocus(null))}
                 />

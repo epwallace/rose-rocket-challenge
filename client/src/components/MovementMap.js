@@ -83,7 +83,7 @@ const MovementMap = () => {
 
     return (
       <GoogleMap
-        mapContainerClassName="w-1/2 h-96 min-h-full mx-auto"
+        mapContainerClassName="w-full h-96 min-h-full mx-auto"
         center={center}
         zoom={6}
         options={{ mapId: "a7fb051b40295fef" }}

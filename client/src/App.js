@@ -8,14 +8,14 @@ const App = () => {
   const formIsActive = useSelector(getFormStatus);
 
   return (
-    <div className="bg-gray-200 p-5">
+    <div className="bg-gray-200 p-5 h-screen">
       <h1 className="text-3xl mb-5">Rose Rocket Challenge</h1>
 
-      <div className="flex h-screen divide-x-8">
-        <div className="bg-white rounded-xl w-2/3 text-xs">
+      <div className="container max-w-screen-lg flex flex-col divide-y-8 items-center mx-auto">
+        <MovementMap />
+        <div className="bg-white rounded-xl w-full text-xs">
           {formIsActive ? <MovementForm /> : <MovementTable />}
         </div>
-        <MovementMap />
       </div>
     </div>
   );

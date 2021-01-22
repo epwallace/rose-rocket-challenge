@@ -126,12 +126,22 @@ const MovementMap = () => {
           // in route mode, display the driver's route
           mode === "route" &&
             route.map((movement, i) => {
+              /** In the route array, some "movements" without freight are required.
+               * Drivers have to make these empty trips when a given destination has no outgoing movements.
+               * These "bridges" have null id values. */
+              let bridgeId = null;
+
+              // For bridge movement N movements X and Y, let N.id = {X.id}-{Y.id}
+              if (!movement.id) {
+                bridgeId = `${route[i - 1].id}-${route[i + 1].id}`;
+              }
+
               const { id, origin, destination } = movement;
               const path = [origin, destination];
               return (
                 <Polyline
                   path={path}
-                  key={id}
+                  key={id || bridgeId}
                   options={{
                     strokeColor: focus === id && id ? red : blue,
                     strokeWeight: id ? 8 : 0,
@@ -140,7 +150,7 @@ const MovementMap = () => {
                     // when a truck must drive without freight, change the line style
                     icons: id ? [arrowhead] : [thinClosedArrow, dashed],
                   }}
-                  onMouseOver={() => dispatch(setFocus(id))}
+                  onMouseOver={() => dispatch(id && setFocus(id))}
                   onMouseOut={() => dispatch(setFocus(null))}
                 />
               );

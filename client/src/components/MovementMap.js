@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { movementsSelector } from "../slices/movementsSlice";
 import { setFocus } from "../slices/focusSlice";
-import { usePrevious } from "../util";
+import { usePrevious, getMidpoint } from "../util";
 import { naiveAlgorithm } from "../util/algorithms";
 
 const orange = "#fab132";
@@ -110,43 +110,40 @@ const MovementMap = () => {
         options={{ mapId: "a7fb051b40295fef" }}
       >
         {
-          // BUG: markers with same location have overlapping labels
-          // BUG: markers need to be deleted/updated along with movements
-          // generate markers for all locations the driver must visit
-          route.length &&
-            route.map((point, index) => {
-              return (
-                <Marker
-                  position={point.origin}
-                  label={(index + 1).toString()}
-                  key={point.id}
-                />
-              );
-            })
-        }
-
-        {
           // in route mode, display the driver's route
           mode === "route" &&
             route.map((movement, i) => {
               const { id, bridgeId, origin, destination } = movement;
               const path = [origin, destination];
               return (
-                <Polyline
-                  path={path}
-                  key={id || bridgeId} // avoid key collisions; id is null for bridges
-                  options={{
-                    strokeColor: focus === id && id ? red : blue,
-                    strokeWeight: id ? 8 : 0,
-                    strokeOpacity: 0.8,
+                <div key={id || bridgeId}>
+                  {/* avoid key collisions; id is null for bridges */}
+                  <Polyline
+                    path={path}
+                    options={{
+                      strokeColor: focus === id && id ? red : blue,
+                      strokeWeight: id ? 8 : 0,
+                      strokeOpacity: 0.8,
 
-                    // when a truck must drive without freight, change the line style
-                    icons: id ? [arrowhead] : [thinClosedArrow, dashed],
-                  }}
+                      // when a truck must drive without freight, change the line style
+                      icons: id ? [arrowhead] : [thinClosedArrow, dashed],
+                    }}
                     onLoad={(line) => mapIdToPolyline(id, line)} // maintain a reference
-                  onMouseOver={() => dispatch(id && setFocus(id))}
-                  onMouseOut={() => dispatch(setFocus(null))}
-                />
+                    onMouseOver={() => dispatch(id && setFocus(id))}
+                    onMouseOut={() => dispatch(setFocus(null))}
+                  />
+
+                  {
+                    // indicate order of movements with a marker in the polyline's midpoint
+                    <Marker
+                      position={getMidpoint(
+                        movement.origin,
+                        movement.destination
+                      )}
+                      label={(i + 1).toString()}
+                    />
+                  }
+                </div>
               );
             })
         }

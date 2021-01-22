@@ -45,23 +45,19 @@ export const naiveAlgorithm = (input) => {
       continue;
     }
 
-    // no movements connect to our start or end; let's just append another
-    next = movements[0];
+    // no movements connect to our start or end; have to to drive to the next movement
+    /* TODO: in more optimized algorithm, could find which of the remaining movements
+             are closest to start/end of current route */
+    next = {
+      id: null,
+      origin: end.destination,
+      destination: movements[0].origin,
+    };
+    next.id = null;
     route.push(next);
-    movements = movements.filter((x) => x.id !== next.id);
     end = next;
     continue;
   }
 
-  // fold sequence of movements into a route of points
-  const result = route.reduce(
-    (acc, x) => {
-      if (acc[acc.length - 1] === x.origin) return [...acc, x.destination];
-      return [...acc, x.origin, x.destination];
-    },
-    [route[0].origin]
-  );
-
-  console.log("result:", result);
-  return result;
+  return route;
 };

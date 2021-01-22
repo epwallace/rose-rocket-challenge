@@ -16,3 +16,10 @@ export function usePrevious(value) {
 export const isSameLocation = (x, y) => {
   return x.lat === y.lat && x.lng === y.lng;
 };
+
+export const getMidpoint = (x, y) => {
+  return {
+    lat: (x.lat + y.lat) / 2,
+    lng: (x.lng + y.lng) / 2,
+  };
+};

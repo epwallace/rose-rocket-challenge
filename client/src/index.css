@@ -1,6 +1,14 @@
 @tailwind base;
 @tailwind components;
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  @apply bg-gray-200;
+}
+
 /* TABLE STYLES -------------------------------------------------------------*/
 
 /* cell padding + default cell border */

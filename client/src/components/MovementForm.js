@@ -140,47 +140,54 @@ const MovementForm = () => {
 
   // TODO: render error messages on the form (e.g. "This field is required")
   return (
-    <form
-      className="flex flex-col"
-      onSubmit={handleSubmit(currentMovement ? handleUpdate : handleCreation)}
-    >
-      {/* coordinates section */}
-      <fieldset className="flex justify-between">
-        {/* originating coordinates */}
-        <fieldset>
-          <legend>Originating Coordinates:</legend>
-          {createCoordinateInput("originLat", "Latitude")}
-          {createCoordinateInput("originLng", "Longitude")}
+    <div className="w-full max-w-screen-sm mx-auto">
+      <h2 className="text-lg font-bold mb-2">Add a new movement:</h2>
+      <form
+        className="flex flex-col mx-auto"
+        onSubmit={handleSubmit(currentMovement ? handleUpdate : handleCreation)}
+      >
+        {/* coordinates section */}
+        <fieldset className="flex flex-col md:flex-row md:justify-between items-center">
+          {/* originating coordinates */}
+          <fieldset>
+            <legend>Originating Coordinates:</legend>
+            {createCoordinateInput("originLat", "Latitude")}
+            {createCoordinateInput("originLng", "Longitude")}
+          </fieldset>
+
+          {/* destination coordinates */}
+          <fieldset className="mt-2 md:mt-0">
+            <legend>Desintation Coordinates:</legend>
+            {createCoordinateInput("destinationLat", "Latitude")}
+            {createCoordinateInput("destinationLng", "Longitude")}
+          </fieldset>
         </fieldset>
 
-        {/* destination coordinates */}
-        <fieldset>
-          <legend>Desintation Coordinates:</legend>
-          {createCoordinateInput("destinationLat", "Latitude")}
-          {createCoordinateInput("destinationLng", "Longitude")}
-        </fieldset>
-      </fieldset>
+        {/* movement description */}
+        <label className="flex flex-col mt-2 w-full mx-auto">
+          <span>Description:</span>
+          <input type="text" name="description" ref={register} />
+        </label>
 
-      {/* movement description */}
-      <label>
-        <span>Description:</span>
-        <input type="text" name="description" ref={register} />
-      </label>
-
-      {/* submission */}
-      <div className="mx-auto">
-        <input className="btn-green w-40" type="submit" />
-        <button
-          className="btn-yellow w-40"
-          onClick={() => dispatch(closeForm())}
-        >
-          cancel
-        </button>
-      </div>
-      {!formState.isValid && formState.isSubmitted && (
-        <p>Please fix all errors and resubmit.</p>
-      )}
-    </form>
+        {/* submission */}
+        <div className="flex flex-col w-full max-w-screen-xs mx-auto">
+          <input
+            className="btn-green mt-2"
+            type="submit"
+            value="Submit Movement"
+          />
+          <button
+            className="btn-yellow mt-2"
+            onClick={() => dispatch(closeForm())}
+          >
+            cancel
+          </button>
+        </div>
+        {!formState.isValid && formState.isSubmitted && (
+          <p>Please fix all errors and resubmit.</p>
+        )}
+      </form>
+    </div>
   );
 };
 

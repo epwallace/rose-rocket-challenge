@@ -20,7 +20,7 @@ const MovementTable = () => {
 
   return (
     <>
-      <table className="table-auto mx-auto p-3">
+      <table className="table-auto mx-auto max-w-full">
         <thead>
           <tr>
             <th>ID</th>

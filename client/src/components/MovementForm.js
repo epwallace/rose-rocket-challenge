@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
@@ -7,6 +8,7 @@ import {
   updateMovement,
 } from "../slices/movementsSlice";
 import { closeForm, getCurrentMovement } from "../slices/formSlice";
+import CoordinateFinder from "./CoordinateFinder";
 
 const MovementForm = () => {
   const currentMovement = useSelector(getCurrentMovement);
@@ -110,34 +112,6 @@ const MovementForm = () => {
     dispatch(closeForm());
   };
 
-  /** Generate a form input that takes a coordinate in the range [-90, 90] */
-  const createCoordinateInput = (name, label) => {
-    return (
-      <label
-        className={
-          formState.errors[name]
-            ? "m-1 rounded-md bg-red-300 px-2 py-1 font-bold"
-            : "m-1"
-        }
-      >
-        <span>{label}</span>
-        <input
-          className="m-1"
-          type="number"
-          step="any"
-          name={name}
-          ref={register({
-            required: true,
-            valueAsNumber: true,
-            validate: (x) =>
-              (x >= -90 && x <= 90) ||
-              "Must be a number in the range [-90, 90]",
-          })}
-        />
-      </label>
-    );
-  };
-
   // TODO: render error messages on the form (e.g. "This field is required")
   return (
     <div className="w-full max-w-screen-sm mx-auto">
@@ -148,19 +122,8 @@ const MovementForm = () => {
       >
         {/* coordinates section */}
         <fieldset className="flex flex-col md:flex-row md:justify-between items-center">
-          {/* originating coordinates */}
-          <fieldset>
-            <legend>Originating Coordinates:</legend>
-            {createCoordinateInput("originLat", "Latitude")}
-            {createCoordinateInput("originLng", "Longitude")}
-          </fieldset>
-
-          {/* destination coordinates */}
-          <fieldset className="mt-2 md:mt-0">
-            <legend>Desintation Coordinates:</legend>
-            {createCoordinateInput("destinationLat", "Latitude")}
-            {createCoordinateInput("destinationLng", "Longitude")}
-          </fieldset>
+          <CoordinateFinder name="origin" register={register} />
+          <CoordinateFinder name="destination" register={register} />
         </fieldset>
 
         {/* movement description */}
@@ -171,11 +134,14 @@ const MovementForm = () => {
 
         {/* submission */}
         <div className="flex flex-col w-full max-w-screen-xs mx-auto">
+          {/* submit button */}
           <input
             className="btn-green mt-2"
             type="submit"
             value="Submit Movement"
           />
+
+          {/* cancel button */}
           <button
             className="btn-yellow mt-2"
             onClick={() => dispatch(closeForm())}

@@ -8,8 +8,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { movementsSelector } from "../slices/movementsSlice";
 import { setFocus } from "../slices/focusSlice";
-import { usePrevious, getMidpoint } from "../util";
+import { usePrevious } from "../util";
 import { naiveAlgorithm } from "../util/algorithms";
+import { getRoute } from "../api/index";
 
 const orange = "#fab132";
 const red = "#fa3261";
@@ -47,7 +48,17 @@ const MovementMap = () => {
 
   useEffect(() => {
     dispatch(setFocus(null));
-    setRoute(naiveAlgorithm(movements));
+    const generateRoutePolylines = async () => {
+      // determine which route the druver will take to complete the deliveries
+      const routeSegments = naiveAlgorithm(movements);
+
+      // compute and store the polyline for each segment in the route
+      for await (let x of routeSegments) {
+        x.polyline = await getRoute(x.origin, x.destination);
+      }
+      setRoute(routeSegments);
+    };
+    generateRoutePolylines();
   }, [movements, dispatch]);
 
   /** Maps a movement ID to a Polyline (in "polylines" state object)
@@ -65,15 +76,18 @@ const MovementMap = () => {
     // Enter your own Google Maps API key
     googleMapsApiKey: "AIzaSyBp8nFSp3hZPV-np6jNSR2I73BO2jCcr8A",
     mapIds: ["a7fb051b40295fef"],
+    disableDefaultUI: true,
   });
 
   const renderMap = () => {
     const arrowhead = {
       icon: {
         path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-        scale: 5,
+        scale: 4,
+        fillOpacity: 0.8,
+        strokeWeight: 0,
       },
-      repeat: "150px",
+      repeat: "100px",
     };
 
     const thinClosedArrow = {
@@ -113,36 +127,33 @@ const MovementMap = () => {
           // in route mode, display the driver's route
           mode === "route" &&
             route.map((movement, i) => {
-              const { id, bridgeId, origin, destination } = movement;
-              const path = [origin, destination];
+              const { id, bridgeId, polyline, origin, destination } = movement;
+              const movementOptions = {
+                fillColor: focus === id ? red : blue,
+                strokeColor: focus === id ? red : blue,
+                strokeWeight: 4,
+                strokeOpacity: 0.8,
+                icons: [arrowhead],
+              };
+              const bridgeOptions = {
+                strokeColor: orange,
+                strokeWeight: 0,
+                strokeOpacity: 1,
+                icons: [thinClosedArrow, dashed],
+                zIndex: 2,
+              };
               return (
-                <div key={id || bridgeId}>
-                  {/* avoid key collisions; id is null for bridges */}
+                <div key={id | bridgeId}>
                   <Polyline
-                    path={path}
-                    options={{
-                      strokeColor: focus === id && id ? red : blue,
-                      strokeWeight: id ? 8 : 0,
-                      strokeOpacity: 0.8,
-
-                      // when a truck must drive without freight, change the line style
-                      icons: id ? [arrowhead] : [thinClosedArrow, dashed],
-                    }}
-                    onLoad={(line) => mapIdToPolyline(id, line)} // maintain a reference
+                    id={id | bridgeId}
+                    path={polyline}
+                    options={id ? movementOptions : bridgeOptions}
+                    onLoad={(line) => mapIdToPolyline(id || bridgeId, line)} // maintain a reference
                     onMouseOver={() => dispatch(id && setFocus(id))}
                     onMouseOut={() => dispatch(setFocus(null))}
                   />
-
-                  {
-                    // indicate order of movements with a marker in the polyline's midpoint
-                    <Marker
-                      position={getMidpoint(
-                        movement.origin,
-                        movement.destination
-                      )}
-                      label={(i + 1).toString()}
-                    />
-                  }
+                  {i === 0 && <Marker position={origin} label={"0"} />}
+                  <Marker position={destination} label={(i + 1).toString()} />
                 </div>
               );
             })

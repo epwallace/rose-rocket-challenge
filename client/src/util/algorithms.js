@@ -2,6 +2,11 @@
 
 import { isSameLocation } from "./index";
 
+/* NOTE: For an algorithm to be compatible with MovementMap, it must accept an
+         array of Movement objects and return an array of RouteSegment
+         segments. You can change which algorithm is used by altering which
+         algorithm is imported as 'createRoute' in the MovementMap file. */
+
 export const naiveAlgorithm = (input) => {
   // trivial cases
   if (input.length === 0) return input;

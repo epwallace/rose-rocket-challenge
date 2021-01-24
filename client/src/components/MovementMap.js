@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { movementsSelector } from "../slices/movementsSlice";
 import { setFocus } from "../slices/focusSlice";
 import { usePrevious } from "../util";
-import { naiveAlgorithm } from "../util/algorithms";
+import { naiveAlgorithm as createRoute } from "../util/algorithms";
 import { getRoute } from "../api/index";
 
 const orange = "#fab132";
@@ -50,7 +50,7 @@ const MovementMap = () => {
     dispatch(setFocus(null));
     const generateRoutePolylines = async () => {
       // determine which route the druver will take to complete the deliveries
-      const routeSegments = naiveAlgorithm(movements);
+      const routeSegments = createRoute(movements);
 
       // compute and store the polyline for each segment in the route
       for await (let x of routeSegments) {

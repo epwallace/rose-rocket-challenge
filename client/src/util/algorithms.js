@@ -7,6 +7,25 @@ import { isSameLocation } from "./index";
          segments. You can change which algorithm is used by altering which
          algorithm is imported as 'createRoute' in the MovementMap file. */
 
+// types
+/** A segment of a driver's route between location X and location Y. A
+ * RouteSegment either corresponds to a movement, or it "bridges" two
+ * disconnected movements.
+ * @typedef RouteSegment
+ * @property {?number} id the id if the corresponding Movement, if it exists
+ * @property {?string} bridgeId if the RouteSegment does not correspond to a
+ *   to a movement, but it bridges movemenets X and Y, then the bridgeId is
+ *   the string `${X.id}-`${Y.id}
+ * @property {Location} origin the starting location of this segment
+ * @property {Location} destination the ending location of this segment
+ * @property {string} description a text description of this segment
+ */
+
+/**
+ *
+ * @param {Movement[]} input
+ * @returns {RouteSegment[]}
+ */
 export const naiveAlgorithm = (input) => {
   // trivial cases
   if (input.length === 0) return input;
@@ -61,6 +80,7 @@ export const naiveAlgorithm = (input) => {
 
       // we can uniquely identify this bridge by the movements it connects
       bridgeId: `${end.id}-${movements[0].id}`,
+      description: `A bridge segment connecting movements ${end.id} and ${movements[0].id}`,
     };
     next.id = null;
     route.push(next);

@@ -14,25 +14,15 @@ const MovementForm = () => {
   const currentMovement = useSelector(getCurrentMovement);
   const movements = useSelector(movementsSelector);
   const dispatch = useDispatch();
-  const { register, handleSubmit, formState, reset } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm({
     mode: "onBlur",
   });
 
-  // if a movement is being edited, set the fields accordingly
+  // if a movement is being edited, set the description accordingly
+  // NOTE: origin/destination coordinates are set in CoordinateFinder
   useEffect(() => {
-    if (currentMovement) {
-      const { origin, destination, description } = currentMovement;
-
-      // populate the form fields
-      reset({
-        description,
-        originLat: origin.lat,
-        originLng: origin.lng,
-        destinationLat: destination.lat,
-        destinationLng: destination.lng,
-      });
-    }
-  }, [currentMovement, reset]);
+    if (currentMovement) setValue("description", currentMovement.description);
+  }, [currentMovement, setValue]);
 
   /** Convert the FormData from MovementForm into {origin, destination, description} */
   const formatFormData = (data) => {
@@ -96,7 +86,11 @@ const MovementForm = () => {
   // TODO: render error messages on the form (e.g. "This field is required")
   return (
     <div className="w-full max-w-screen-sm mx-auto">
-      <h2 className="text-lg font-bold mb-2">Add a new movement:</h2>
+      <h2 className="text-lg font-bold mb-2">
+        {currentMovement
+          ? `Edit movement ${currentMovement.id}:`
+          : "Add a new movement:"}
+      </h2>
       <form
         className="flex flex-col mx-auto"
         onSubmit={handleSubmit(currentMovement ? handleUpdate : handleCreation)}

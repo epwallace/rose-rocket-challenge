@@ -8,49 +8,34 @@ import {
 } from "../slices/movementsSlice";
 import { closeForm, getCurrentMovement } from "../slices/formSlice";
 import CoordinateFinder from "./CoordinateFinder";
+import { isSameMovement } from "../util";
 
 const MovementForm = () => {
   const currentMovement = useSelector(getCurrentMovement);
   const movements = useSelector(movementsSelector);
   const dispatch = useDispatch();
-  const { register, handleSubmit, formState, reset } = useForm({
+  const { register, handleSubmit, formState, setValue } = useForm({
     mode: "onBlur",
   });
 
-  // if a movement is being edited, set the fields accordingly
+  // if a movement is being edited, set the description accordingly
+  // NOTE: origin/destination coordinates are set in CoordinateFinder
   useEffect(() => {
-    if (currentMovement) {
-      const { origin, destination, description } = currentMovement;
+    if (currentMovement) setValue("description", currentMovement.description);
+  }, [currentMovement, setValue]);
 
-      // populate the form fields
-      reset({
-        description,
-        originLat: origin.lat,
-        originLng: origin.lng,
-        destinationLat: destination.lat,
-        destinationLng: destination.lng,
-      });
-    }
-  }, [currentMovement, reset]);
-
-  // TODO: define types for movement and locations (latLng) for more descriptive JSDoc params
-  /** Find all movements from origin to destination in the given array
-   * @param {[Object]} movements An array of movements
-   * @param {{lat: number, lng: number}} origin Originating latitude and longitude
-   * @param {{lat: number, lng: number}} destination Destination latitude and longitude
+  /** A proposed movement that has been drafted but not saved into the system.
+   * Essentially a Movement without an id param.
+   *
+   * @typedef MovementDraft
+   * @property {Location} origin the starting location of the freight
+   * @property {Location} destination the ending location of the freight
+   * @property {string} description a text description of the freight
    */
-  const findDuplicateMovements = (movements, origin, destination) => {
-    return Object.values(movements).filter((movement) => {
-      return (
-        movement.origin.lat === origin.lat &&
-        movement.origin.lng === origin.lng &&
-        movement.destination.lat === destination.lat &&
-        movement.destination.lng === destination.lng
-      );
-    });
-  };
 
-  /** Convert the FormData from MovementForm into {origin, destination, description} */
+  /** Convert the FormData from MovementForm into a MovementDraft
+   * @returns {MovementDraft}
+   */
   const formatFormData = (data) => {
     const origin = {
       lat: data["originLat"],
@@ -65,39 +50,41 @@ const MovementForm = () => {
     return { origin, destination, description };
   };
 
-  /** Creates a new movement with the provided data */
+  /** Creates a new movement with the provided data
+   * @param {MovementDraft} data
+   */
   const handleCreation = (data) => {
-    const { origin, destination, description } = formatFormData(data);
+    const newMovement = formatFormData(data);
+    const { origin, destination, description } = newMovement;
 
     // check for duplicates
-    let duplicates = findDuplicateMovements(movements, origin, destination);
+    let duplicates = movements.filter((x) => isSameMovement(newMovement, x));
     if (duplicates.length) {
       // the movement has duplicate coordinates: forbid creation
       alert(
-        `This movement already exists (id: ${duplicates[0].id}! Please provide unique coordinates.`
+        `This movement already exists (id: ${duplicates[0].id}! You may not create a duplicate.`
       );
     } else {
-      // the movement has unique coordinates: allow creation
+      // the movement is unique: allow creation
       dispatch(addMovement(origin, destination, description));
       dispatch(closeForm());
     }
   };
 
-  /** Update an existing movement with the provided data */
+  /** Update an existing movement with the provided data
+   * @param {MovementDraft} data
+   */
   const handleUpdate = (data) => {
-    const { origin, destination, description } = formatFormData(data);
+    const updatedMovement = formatFormData(data);
     const payload = {
-      origin,
-      destination,
-      description,
+      ...updatedMovement,
       id: currentMovement.id,
     };
 
-    // check for duplicates
-    let duplicates = findDuplicateMovements(movements, origin, destination);
-
-    // if the coordinates are unchanged, the current movement will be in the array
-    duplicates = duplicates.filter((dupe) => dupe.id !== currentMovement.id);
+    // check for duplicates, ignoring the unedited version of this movement
+    let duplicates = movements
+      .filter((x) => isSameMovement(updatedMovement, x))
+      .filter((dupe) => dupe.id !== currentMovement.id);
 
     if (duplicates.length) {
       // the new coordinates are already associated with a movement: warn user
@@ -114,7 +101,11 @@ const MovementForm = () => {
   // TODO: render error messages on the form (e.g. "This field is required")
   return (
     <div className="w-full max-w-screen-sm mx-auto">
-      <h2 className="text-lg font-bold mb-2">Add a new movement:</h2>
+      <h2 className="text-lg font-bold mb-2">
+        {currentMovement
+          ? `Edit movement ${currentMovement.id}:`
+          : "Add a new movement:"}
+      </h2>
       <form
         className="flex flex-col mx-auto"
         onSubmit={handleSubmit(currentMovement ? handleUpdate : handleCreation)}

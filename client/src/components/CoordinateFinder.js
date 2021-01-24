@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import { getCurrentMovement } from "../slices/formSlice";
 
 const CoordinateFinder = ({ name, register, ...rest }) => {
+  const movement = useSelector(getCurrentMovement);
   const [query, setQuery] = useState("");
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
+  const [lat, setLat] = useState(movement ? movement[name].lat : "");
+  const [lng, setLng] = useState(movement ? movement[name].lng : "");
   const registerOptions = { required: true, valueAsNumber: true };
 
   const handleLookup = async () => {
@@ -47,7 +50,7 @@ const CoordinateFinder = ({ name, register, ...rest }) => {
       </button>
 
       {/* latitude input */}
-      <label htmlFor="lat" className="sr-only">
+      <label htmlFor={`${name}Lat`} className="sr-only">
         latitude
       </label>
       <input
@@ -61,7 +64,7 @@ const CoordinateFinder = ({ name, register, ...rest }) => {
       />
 
       {/* longitude input */}
-      <label htmlFor="lng" className="sr-only">
+      <label htmlFor={`${name}Lng`} className="sr-only">
         longitude
       </label>
       <input

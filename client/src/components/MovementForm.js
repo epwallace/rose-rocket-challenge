@@ -8,6 +8,7 @@ import {
 } from "../slices/movementsSlice";
 import { closeForm, getCurrentMovement } from "../slices/formSlice";
 import CoordinateFinder from "./CoordinateFinder";
+import { isSameMovement } from "../util";
 
 const MovementForm = () => {
   const currentMovement = useSelector(getCurrentMovement);
@@ -33,23 +34,6 @@ const MovementForm = () => {
     }
   }, [currentMovement, reset]);
 
-  // TODO: define types for movement and locations (latLng) for more descriptive JSDoc params
-  /** Find all movements from origin to destination in the given array
-   * @param {[Object]} movements An array of movements
-   * @param {{lat: number, lng: number}} origin Originating latitude and longitude
-   * @param {{lat: number, lng: number}} destination Destination latitude and longitude
-   */
-  const findDuplicateMovements = (movements, origin, destination) => {
-    return Object.values(movements).filter((movement) => {
-      return (
-        movement.origin.lat === origin.lat &&
-        movement.origin.lng === origin.lng &&
-        movement.destination.lat === destination.lat &&
-        movement.destination.lng === destination.lng
-      );
-    });
-  };
-
   /** Convert the FormData from MovementForm into {origin, destination, description} */
   const formatFormData = (data) => {
     const origin = {
@@ -67,17 +51,18 @@ const MovementForm = () => {
 
   /** Creates a new movement with the provided data */
   const handleCreation = (data) => {
-    const { origin, destination, description } = formatFormData(data);
+    const newMovement = formatFormData(data);
+    const { origin, destination, description } = newMovement;
 
     // check for duplicates
-    let duplicates = findDuplicateMovements(movements, origin, destination);
+    let duplicates = movements.filter((x) => isSameMovement(newMovement, x));
     if (duplicates.length) {
       // the movement has duplicate coordinates: forbid creation
       alert(
-        `This movement already exists (id: ${duplicates[0].id}! Please provide unique coordinates.`
+        `This movement already exists (id: ${duplicates[0].id}! You may not create a duplicate.`
       );
     } else {
-      // the movement has unique coordinates: allow creation
+      // the movement is unique: allow creation
       dispatch(addMovement(origin, destination, description));
       dispatch(closeForm());
     }
@@ -85,19 +70,16 @@ const MovementForm = () => {
 
   /** Update an existing movement with the provided data */
   const handleUpdate = (data) => {
-    const { origin, destination, description } = formatFormData(data);
+    const updatedMovement = formatFormData(data);
     const payload = {
-      origin,
-      destination,
-      description,
+      ...updatedMovement,
       id: currentMovement.id,
     };
 
-    // check for duplicates
-    let duplicates = findDuplicateMovements(movements, origin, destination);
-
-    // if the coordinates are unchanged, the current movement will be in the array
-    duplicates = duplicates.filter((dupe) => dupe.id !== currentMovement.id);
+    // check for duplicates, ignoring the unedited version of this movement
+    let duplicates = movements
+      .filter((x) => isSameMovement(updatedMovement, x))
+      .filter((dupe) => dupe.id !== currentMovement.id);
 
     if (duplicates.length) {
       // the new coordinates are already associated with a movement: warn user

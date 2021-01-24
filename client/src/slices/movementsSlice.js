@@ -28,6 +28,7 @@ const movementsSlice = createSlice({
   reducers: {
     addMovement: {
       reducer(state, action) {
+        console.log(action.payload);
         const { id, origin, destination, description } = action.payload;
         state.push({ id, origin, destination, description });
       },

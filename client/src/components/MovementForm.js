@@ -24,7 +24,18 @@ const MovementForm = () => {
     if (currentMovement) setValue("description", currentMovement.description);
   }, [currentMovement, setValue]);
 
-  /** Convert the FormData from MovementForm into {origin, destination, description} */
+  /** A proposed movement that has been drafted but not saved into the system.
+   * Essentially a Movement without an id param.
+   *
+   * @typedef MovementDraft
+   * @property {Location} origin the starting location of the freight
+   * @property {Location} destination the ending location of the freight
+   * @property {string} description a text description of the freight
+   */
+
+  /** Convert the FormData from MovementForm into a MovementDraft
+   * @returns {MovementDraft}
+   */
   const formatFormData = (data) => {
     const origin = {
       lat: data["originLat"],
@@ -39,7 +50,9 @@ const MovementForm = () => {
     return { origin, destination, description };
   };
 
-  /** Creates a new movement with the provided data */
+  /** Creates a new movement with the provided data
+   * @param {MovementDraft} data
+   */
   const handleCreation = (data) => {
     const newMovement = formatFormData(data);
     const { origin, destination, description } = newMovement;
@@ -58,7 +71,9 @@ const MovementForm = () => {
     }
   };
 
-  /** Update an existing movement with the provided data */
+  /** Update an existing movement with the provided data
+   * @param {MovementDraft} data
+   */
   const handleUpdate = (data) => {
     const updatedMovement = formatFormData(data);
     const payload = {

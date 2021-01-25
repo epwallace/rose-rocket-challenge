@@ -49,10 +49,10 @@ const MovementTable = () => {
                     ({destination.lat}, {destination.lng})
                   </td>
                   <td>{description}</td>
-                  <td className="flex">
+                  <td className="whitespace-nowrap">
                     {/* edit button */}
                     <button
-                      className="btn-blue py-1"
+                      className="btn-blue"
                       onClick={() => dispatch(launchEditForm({ movement }))}
                     >
                       edit

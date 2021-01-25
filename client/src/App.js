@@ -9,7 +9,7 @@ const App = () => {
 
   return (
     <div className="flex flex-col max-h-screen overflow-y-auto xl:h-screen">
-      <h1 className="text-3xl mb-5">Rose Rocket Challenge</h1>
+      <h1 className="text-3xl mb-5 p-3">Rose Rocket Challenge</h1>
 
       <div className="container flex flex-col xl:flex-row xl:items-stretch items-center mx-auto flex-grow">
         <MovementMap />

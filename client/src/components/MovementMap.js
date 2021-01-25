@@ -121,7 +121,11 @@ const MovementMap = () => {
         mapContainerClassName="w-full h-96 min-h-full mx-auto rounded-lg"
         center={center}
         zoom={6}
-        options={{ mapId: "a7fb051b40295fef" }}
+        options={{
+          mapTypeControl: false,
+          streetViewControl: false,
+          mapId: "a7fb051b40295fef",
+        }}
       >
         {
           // in route mode, display the driver's route

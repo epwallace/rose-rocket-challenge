@@ -65,7 +65,7 @@ const MovementMap = () => {
 
   /** Maps a movement ID to a Polyline (in "polylines" state object)
    * @param {string} id The movement ID corresponding to the Polyline
-   * @param {Polyline} polyline A Polyline object
+   * @param {Polyline} polyline A Polyline instance
    */
   const mapIdToPolyline = (id, line) => {
     setPolylines((prevState) => {

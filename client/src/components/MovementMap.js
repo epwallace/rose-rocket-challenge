@@ -32,14 +32,16 @@ const MovementMap = () => {
 
   // set polyline color to red when movement becomes focused
   useEffect(() => {
-    if (focus) {
+    // BUG: sometimes, polylines[focus] isn't defined if the app reloads after
+    //      a save; ensuring polylines[focus] is defined until I work this out
+    if (focus && polylines[focus]) {
       polylines[focus].setOptions({ strokeColor: red });
     }
   }, [focus, polylines]);
 
   // reset polyline color when movements loses focus
   useEffect(() => {
-    if (previousFocus) {
+    if (previousFocus && polylines[previousFocus]) {
       polylines[previousFocus].setOptions({
         strokeColor: mode === "movement" ? orange : blue,
       });
@@ -47,7 +49,7 @@ const MovementMap = () => {
   }, [previousFocus, polylines, mode]);
 
   useEffect(() => {
-    dispatch(setFocus(null));
+    setPolylines({});
     const generateRoutePolylines = async () => {
       // determine which route the druver will take to complete the deliveries
       const routeSegments = createRoute(movements);

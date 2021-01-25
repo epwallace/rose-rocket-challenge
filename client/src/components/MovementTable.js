@@ -9,6 +9,7 @@ import { toggleMode } from "../slices/modeSlice";
 const MovementTable = () => {
   const dispatch = useDispatch();
   const focus = useSelector((state) => state.focus);
+  const mode = useSelector((state) => state.mode);
   const movements = useSelector(movementsSelector);
 
   const handleDelete = (id) => {
@@ -81,7 +82,7 @@ const MovementTable = () => {
         className="block btn-blue mx-auto mt-2"
         onClick={() => dispatch(toggleMode())}
       >
-        route mode
+        activate {mode === "movement" ? "route" : "movement"} mode
       </button>
     </>
   );

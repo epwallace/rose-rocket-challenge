@@ -71,8 +71,6 @@ export const naiveAlgorithm = (input) => {
     }
 
     // no movements connect to our start or end; have to to drive to the next movement
-    /* TODO: in more optimized algorithm, could find which of the remaining movements
-             are closest to start/end of current route */
     next = {
       id: null,
       origin: end.destination,

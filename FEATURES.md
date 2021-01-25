@@ -27,10 +27,6 @@ input coordinates if they do not wish to use the search bar.
 The `naiveAlgorithm` will not produce routes of this nature, as long as the
 input is correctly formed (i.e. no `[Toronto -> Toronto]` route is provided.
 
-### Route optimization: minimize distance traveled when planning a route
-
-TODO: write this when optimization is complete
-
 ### Visualize driver routes with polylines
 
 I implemented this by using the
@@ -60,6 +56,18 @@ section.
 There are many aspects of the app that need work. Here are some things I'd
 improve if I had additional time:
 
+- **algorithm optimization:** This is the area I want to work on the most. I
+  put a lot of time and effort into this part, but my optimized version
+  wasn't ready. I was thinking about how to find the optimal route as a
+  graph problem, and came upon
+  [this paper](https://pubsonline.informs.org/doi/pdf/10.1287/opre.43.3.399)
+  after some research. It seems like we can approach this algorithm a
+  directed rural postman problem, and I'd like to try to implement the
+  approach from this paper. I did try to improve my naive approach a bit
+  by approximating distance with Google's spherical geometry library, but I
+  couldn't it to work properly. I also tried to improve with Google's Distance
+  Matrix API, but I made a pretty big mess of it by accidentally using objects
+  as keys. I'll work on it on my own time.
 - **persistent movement focus:** Currently, a user can "focus" a movement by hovering
   over the corresponding table row or polyline. They will simultaneously
   light up, but the effect ends on mouseout. I think it would be useful to

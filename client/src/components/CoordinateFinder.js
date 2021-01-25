@@ -8,6 +8,7 @@ const CoordinateFinder = ({ name, register, ...rest }) => {
   const [query, setQuery] = useState("");
   const [lat, setLat] = useState(movement ? movement[name].lat : "");
   const [lng, setLng] = useState(movement ? movement[name].lng : "");
+  const [resultName, setResultName] = useState("");
   const registerOptions = { required: true, valueAsNumber: true };
 
   const handleLookup = async () => {
@@ -16,8 +17,10 @@ const CoordinateFinder = ({ name, register, ...rest }) => {
         `https://api.opencagedata.com/geocode/v1/json?q=${query}&key=6200d6d5ca854eb4904746b8af471a2e`
       );
       const { lat, lng } = res.data.results[0].geometry;
+      const { formatted } = res.data.results[0];
       setLat(lat);
       setLng(lng);
+      setResultName(formatted);
     } catch (err) {
       console.log(err);
       alert("Search failed; please try again or enter coordinates manually.");
@@ -48,6 +51,17 @@ const CoordinateFinder = ({ name, register, ...rest }) => {
       >
         get coordinates
       </button>
+      <p className="mb-2">
+        <span>
+          {resultName ? (
+            <>
+              Result: <span className="font-bold">{resultName}</span>
+            </>
+          ) : (
+            "Search or manually enter coordinates."
+          )}
+        </span>
+      </p>
 
       {/* latitude input */}
       <label htmlFor={`${name}Lat`} className="sr-only">
